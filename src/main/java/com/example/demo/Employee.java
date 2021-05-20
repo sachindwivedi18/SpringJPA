@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Alien {
+public class Employee {
 
 	@Id
 	private int aid;
@@ -18,9 +18,6 @@ public class Alien {
 	
 	@Override
 	public String toString() {
-		return "Alien [aid=" + aid + ", aname=" + aname + "]";
-	}
-	
-	
-	
+		return "Employee [aid=" + aid + ", aname=" + aname + "]";
+	}	
 }

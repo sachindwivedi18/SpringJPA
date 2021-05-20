@@ -16,78 +16,81 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.demo.Alien;
+import com.example.demo.Employee;
 
 @RestController
-public class AlienController {
+public class EmployeeController {
 	
 	@Autowired
-	AlienRepo repo;
+	EmployeeRepo repo;
 
 	@RequestMapping("/")
 	public String Home()
 	{
+		return "home";
+	}
+	
+	@RequestMapping("/addEmployee")
+	public String addEmployee(Employee Employee)
+	{
+		repo.save(Employee);
 		return "home.jsp";
 	}
 	
-	@RequestMapping("/addAlien")
-	public String addAlien(Alien alien)
-	{
-		repo.save(alien);
-		return "home.jsp";
-	}
+	//Request Param
 	
-	@RequestMapping("/getAlien")
-	public ModelAndView addAlien(@RequestParam int aid)
+	@RequestMapping("/getEmployee")
+	public String addEmployee(@RequestParam int aid)
 	{
-		System.out.println(repo.findByAname("Sahin"));
+		System.out.println(repo.findByAname("Sachin"));
 		System.out.println("*******************************");
-		System.out.println(repo.findByAidGreaterThan(102));
+		System.out.println(repo.findByAidGreaterThan(aid));
 		System.out.println("*******************************");
 		System.out.println(repo.findByTechSorted(null));
-		ModelAndView mv = new ModelAndView("showalien.jsp");
-		Alien al = repo.findById(aid).orElse(new Alien());
+		ModelAndView mv = new ModelAndView("showEmployee.jsp");
+		Employee al = repo.findById(aid).orElse(new Employee());
 		mv.addObject(al);
-		return mv;
+		return repo.findByAidGreaterThan(aid).toString();
 	}
 	
-	@RequestMapping("/alien/{aid}")
+	// Path Types
+
+	@GetMapping("/Employee/{aid}")
 	@ResponseBody
 	public String getSpecific(@PathVariable("aid") int aid)
 	{
 		return repo.findById(aid).toString();
 	}
 	
-	@GetMapping("/aliens")
+	// Content Negotiation
+	@PostMapping(path="/Employee",consumes= {"application/json"})
+	public Employee add_Employee(@RequestBody Employee Employee)
+	{
+		repo.save(Employee);
+		return Employee;
+	}
+	
+	@DeleteMapping("Employee/{aid}")
+	public String deleteEmployee(@PathVariable int aid)
+	{
+		Employee a = repo.getOne(aid);
+		repo.delete(a);
+		return "deleted";
+	}
+	
+	@PutMapping("/Employee")
+	public Employee updateEmployee(@RequestBody Employee Employee)
+	{
+		repo.save(Employee);
+		return Employee;
+	}
+	
+	
+	
+	@GetMapping("/Employees")
 	@ResponseBody
 	public String getAll()
 	{
 		return repo.findAll().toString();
 	}
-	
-	@PostMapping("/alien")
-	public Alien add_Alien(@RequestBody Alien alien)
-	{
-		repo.save(alien);
-		return alien;
-	}
-	
-	@DeleteMapping("alien/{aid}")
-	public String deleteAlien(@PathVariable int aid)
-	{
-		Alien a = repo.getOne(aid);
-		repo.delete(a);
-		return "deleted";
-	}
-	
-	@PutMapping("/alien")
-	public Alien updateAlien(@RequestBody Alien alien)
-	{
-		repo.save(alien);
-		return alien;
-	}
-	
-	
-	
-	
 }
