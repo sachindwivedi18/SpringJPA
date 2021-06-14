@@ -19,5 +19,12 @@ public class Employee {
 	@Override
 	public String toString() {
 		return "Employee [aid=" + aid + ", aname=" + aname + "]";
+	}
+
+
+	public Employee(int aid, String aname) {
+		super();
+		this.aid = aid;
+		this.aname = aname;
 	}	
 }
