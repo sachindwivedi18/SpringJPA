@@ -36,7 +36,7 @@ public class EmployeeController {
 
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
 	@Autowired
 	private CustomerRepo repo;
 
@@ -45,41 +45,39 @@ public class EmployeeController {
 		return "home";
 	}
 
+	@Autowired
+	private KafkaTemplate<String, Object> kafkaTemp;
+
+	private static final String topic = "Kafka_example";
+
 	@RequestMapping("/addEmployee")
 	public String addEmployee(Employee Employee) {
 		employeeDB.save(Employee);
 		return "home.jsp";
 	}
-	
-	
+
 	// Couchebase //////////////////////////////////////////////////////
-	
-	
-	
+
 	@PostMapping("/addDocument")
 	@ResponseStatus(HttpStatus.CREATED)
-	public String saveCustomer(@RequestBody Customer customer)
-	{
+	public String saveCustomer(@RequestBody Customer customer) {
 		repo.save(customer);
 		return "saved";
 	}
-	
+
 	@GetMapping("/getDocument")
 	@ResponseStatus(HttpStatus.OK)
-	public List<Customer> getAllCustomers()
-	{
+	public List<Customer> getAllCustomers() {
 		return repo.findAll();
 	}
-	
+
 	@DeleteMapping("/delete/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public String delete(@PathVariable("id") int id)
-	{
+	public String delete(@PathVariable("id") int id) {
 		repo.deleteById(id);
-		return id+" is deleted";
+		return id + " is deleted";
 	}
-	
-	
+
 	/////////////////////////////////////////////////////////////////////
 
 	// Request Param
@@ -155,17 +153,11 @@ public class EmployeeController {
 
 		return employeeDB.findAll();
 	}
-	
-	@Autowired
-	private KafkaTemplate<String,Object> kafkaTemp;
-	
-	private static final String topic="Kafka_example";
-	
+
+	// Producer
 	@GetMapping("/publish/{name}")
-	public String post(@PathVariable("name") final String name)
-	{
-//		kafkaTemp.send(topic,message);	
-		kafkaTemp.send(topic,new Employee(1,name));	
+	public String post(@PathVariable("name") final String name) {
+		kafkaTemp.send(topic, new Employee(1, name));
 		return "Published";
 	}
 }
